@@ -1,0 +1,49 @@
+version: '3'
+
+tasks:
+  run:
+    desc: Run the application
+    cmds:
+      - go run main.go
+    sources:
+      - "**/*.go"
+
+  tidy:
+    desc: Clean and organize go.mod and go.sum
+    cmds:
+      - go mod tidy
+
+  build:
+    desc: Build the application
+    cmds:
+      - go build -o bin/app main.go
+
+  fmt:
+    desc: Format the code
+    cmds:
+      - go fmt ./...
+
+  lint:
+    desc: Lint Go code (basic)
+    cmds:
+      - go vet ./...
+
+  test:
+    desc: Run tests
+    cmds:
+      - go test ./...
+
+  env:
+    desc: Show environment variables
+    cmds:
+      - cat .env
+
+  mongo-up:
+    desc: Start local MongoDB with Docker
+    cmds:
+      - docker run -d -p 27017:27017 --name mongo_instagram mongo
+
+  mongo-down:
+    desc: Stop MongoDB container
+    cmds:
+      - docker stop mongo_instagram && docker rm mongo_instagram
