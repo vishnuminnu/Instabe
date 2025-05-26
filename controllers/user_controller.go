@@ -62,3 +62,76 @@ if err != nil {
 c.JSON(http.StatusOK, gin.H{"token": jwtToken})
 
 }
+
+
+
+
+
+
+
+func GetAllUsers(c *gin.Context) {
+	users, err := services.GetAllUsers()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch users"})
+		return
+	}
+	c.JSON(http.StatusOK, users)
+}
+
+
+
+
+
+func FollowUser(c *gin.Context) {
+	userID := c.Param("id")
+	followerID, exists := c.Get("userID") // From JWT
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	err := services.FollowUserService(userID, followerID.(string))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Followed successfully"})
+}
+
+func UnfollowUser(c *gin.Context) {
+	userID := c.Param("id")
+	followerID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+	err := services.UnfollowUserService(userID, followerID.(string))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Unfollowed successfully"})
+}
+
+
+
+
+func GetFollowers(c *gin.Context) {
+	userID := c.Param("id")
+	followers, err := services.GetFollowersService(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, followers)
+}
+
+func GetFollowing(c *gin.Context) {
+	userID := c.Param("id")
+	following, err := services.GetFollowingService(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, following)
+}
